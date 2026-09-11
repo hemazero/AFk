@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تشغيل بوت أترنوس 24/7 الحقيقية</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #111827;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --glow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 868px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: var(--accent-hover);
+            box-shadow: var(--glow);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* Status Box */
+        .status-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .status-online {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            display: inline-block;
+        }
+
+        .status-online .dot {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Console Output */
+        .console-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            height: 280px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .console-line {
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        .log-info { color: #38bdf8; }
+        .log-success { color: var(--accent); }
+        .log-warn { color: var(--warning); }
+        .log-err { color: var(--danger); }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><i class="fa-solid fa-robot"></i> لوحة تشغيل بوت Aternos 24/7</h1>
+        <p>إرسال طلبات حقيقية لسيرفر الـ Backend لإبقاء بوت الماينكرافت متصلاً</p>
+    </header>
+
+    <div class="container">
+        <!-- Control Panel Form -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fa-solid fa-sliders" style="color: var(--accent);"></i> بيانات السيرفر والبوت
+            </div>
+
+            <form id="botForm" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-server"></i> عنوان السيرفر (Server IP)</label>
+                    <div class="grid-2">
+                        <input type="text" id="serverIp" class="form-control" placeholder="myserver.aternos.me" required>
+                        <input type="number" id="serverPort" class="form-control" placeholder="25565" value="25565" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user-gear"></i> اسم البوت (Bot Username)</label>
+                    <input type="text" id="botName" class="form-control" placeholder="AFK_Bot_247" value="AFK_Keeper_247" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-gamepad"></i> إصدار اللعبة (Minecraft Version)</label>
+                    <select id="botVersion" class="form-control">
+                        <option value="auto">تلقائي (Auto Detect)</option>
+                        <option value="1.20.1">1.20.1</option>
+                        <option value="1.19.4">1.19.4</option>
+                        <option value="1.16.5">1.16.5</option>
+                        <option value="1.8.9">1.8.9</option>
+                    </select>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success" id="startBtn" onclick="toggleBot(true)">
+                        <i class="fa-solid fa-play"></i> تشغيل البوت
+                    </button>
+                    <button type="button" class="btn btn-danger" id="stopBtn" onclick="toggleBot(false)" disabled style="opacity: 0.5;">
+                        <i class="fa-solid fa-stop"></i> إيقاف البوت
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Status & Live Console -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fa-solid fa-terminal" style="color: var(--accent);"></i> السجلات المباشرة (Console Logs)
+            </div>
+
+            <div class="status-box">
+                <span>حالة البوت:</span>
+                <span id="statusBadge" class="status-badge status-offline">
+                    <span class="dot"></span> <span id="statusText">متوقف</span>
+                </span>
+            </div>
+
+            <div class="console-wrapper" id="consoleLogs">
+                <div class="console-line log-info">[النظام] جاهز لإرسال الأوامر للخادم الخلفي...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ استبدل هذا الرابط برابط استضافة الـ Backend الخاصة بك (مثل Render أو Railway)
+        // إذا كنت تجرّب محلياً اتركها كما هي localhost:3000
+        const BACKEND_URL = "http://localhost:3000"; 
+
+        function log(msg, type = 'info') {
+            const consoleEl = document.getElementById('consoleLogs');
+            const time = new Date().toLocaleTimeString('ar-EG');
+            const line = document.createElement('div');
+            line.className = `console-line log-${type}`;
+            line.innerText = `[${time}] ${msg}`;
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function updateUI(isOnline) {
+            const statusBadge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+
+            if (isOnline) {
+                statusBadge.className = 'status-badge status-online';
+                statusText.innerText = 'متصل (Online)';
+                startBtn.disabled = true;
+                startBtn.style.opacity = '0.5';
+                stopBtn.disabled = false;
+                stopBtn.style.opacity = '1';
+            } else {
+                statusBadge.className = 'status-badge status-offline';
+                statusText.innerText = 'متوقف';
+                startBtn.disabled = false;
+                startBtn.style.opacity = '1';
+                stopBtn.disabled = true;
+                stopBtn.style.opacity = '0.5';
+            }
+        }
+
+        async function toggleBot(start) {
+            const ip = document.getElementById('serverIp').value;
+            const port = document.getElementById('serverPort').value;
+            const name = document.getElementById('botName').value;
+            const version = document.getElementById('botVersion').value;
+
+            if (!ip) {
+                alert('الرجاء إدخال IP السيرفر أولاً!');
+                return;
+            }
+
+            const endpoint = start ? '/api/bot/start' : '/api/bot/stop';
+
+            try {
+                log(start ? `جاري إرسال طلب تشغيل البوت [${name}]...` : `جاري إرسال طلب إيقاف البوت...`, 'warn');
+                
+                const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        host: ip,
+                        port: port,
+                        username: name,
+                        version: version
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    log(data.message, 'success');
+                    updateUI(start);
+                } else {
+                    log(`خطأ من الخادم: ${data.message || data.error}`, 'err');
+                }
+            } catch (err) {
+                log(`فشل الاتصال بالخادم الخلفي (${BACKEND_URL}): تحقق من تشغيل الـ Backend أو صحة الرابط.`, 'err');
+            }
+        }
+    </script>
+</body>
+</html>
